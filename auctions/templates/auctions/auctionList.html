@@ -1,0 +1,265 @@
+{% extends 'auctions/layout.html'%}
+
+{% load static %}
+
+{% block categories %}
+<div class="flex flex-col text-center w-full mb-4">
+    <h2 class="text-xs text-yellow-500 tracking-widest font-medium title-font">Auctions</h2>
+    <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900">{{ auctionList.title }}</h1>
+</div>
+<div class="flex justify-center">
+    <div class="w-16 h-1 rounded-full bg-yellow-500 inline-flex"></div>
+</div>
+{% endblock %}
+
+{% block body %}
+
+{% comment %} TAB {% endcomment %}
+<div class="lg:w-4/5 mx-auto flex flex-wrap">
+    <div x-data="{
+      openTab: 1,
+      activeClasses: 'flex-grow text-yellow-500 border-b-2 border-yellow-500 mb-0 py-2 text-lg px-1',
+      inactiveClasses: 'flex-grow border-b-2 border-gray-300 py-2 text-lg px-1'}"
+        class="lg:w-1/2 w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
+        <h2 class="text-sm title-font text-gray-500 tracking-widest">{{ auctionList.category }}</h2>
+        <h1 class="text-gray-900 text-3xl title-font font-medium mb-4">{{ auctionList.title }}</h1>
+        <div class="flex mb-4">
+
+            <div class="flex flex-grow" @click="openTab = 1" :class="{ '-mb-px': openTab === 1 }">
+                <a :class="openTab === 1 ? activeClasses : inactiveClasses"
+                    class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1">Description
+                </a>
+            </div>
+            <div class="flex flex-grow" @click="openTab = 2" :class="{ '-mb-px': openTab === 2 }">
+                <a :class="openTab === 2 ? activeClasses : inactiveClasses"
+                    class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1">Bids</a>
+            </div>
+
+            <div class="flex flex-grow" @click="openTab = 3" :class="{ '-mb-px': openTab === 3 }">
+                <a :class="openTab === 3 ? activeClasses : inactiveClasses"
+                    class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1">Comments</a>
+            </div>
+        </div>
+
+        <div x-show="openTab === 1">
+            <p class="leading-relaxed mb-4">{{ auctionList.description }}</p>
+            <div class="flex border-t border-gray-200 py-2">
+                <span class="text-gray-500">Owner</span>
+                <span class="ml-auto text-gray-900">{{ auctionList.owner|capfirst }}</span>
+            </div>
+            <div class="flex border-t border-gray-200 py-2">
+                <span class="text-gray-500">People Watching the List</span>
+                <span class="ml-auto text-gray-900">{{ auctionList.watchedBy }}</span>
+            </div>
+            <div class="flex border-t border-b mb-6 border-gray-200 py-2">
+                <span class="text-gray-500">Date</span>
+                <span class="ml-auto text-gray-900">{{ auctionList.createdAt|date:"N d, Y"}}</span>
+            </div>
+            <div class="flex">
+                {% if auctionList.currentBid %}
+                <span class="title-font font-medium text-2xl text-gray-900">${{ auctionList.currentBid }}</span>
+
+                {% else %}
+                <span class="title-font font-medium text-2xl text-gray-900">${{ auctionList.startingBid }}</span>
+
+                {% endif %}
+
+                {% if  auctionList.owner == user and auctionList.isActive %}
+                <a href="{% url 'closeAuctionList' auctionList.id %}"
+                    class="flex ml-auto text-white bg-yellow-500 border-0 py-2 px-6 focus:outline-none hover:bg-yellow-600 rounded">Close</a>
+                {% endif %}
+
+                <a href="{% url 'changeWatchList' auctionList.id 'auctionList'%}"
+                    class="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
+
+                    {% if auctionList.isWatched %}
+                    <span title="Delete from my Watch List"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                        </svg></span>
+
+                    {% else %}
+                    <span title="Add to my Watch List"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 "
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg></span>
+
+                    {% endif %}
+                </a>
+            </div>
+            {% if failureClose %}
+            <p class="text-red-500 mt-3">Current Auction Listing can not be closed. It should have one bid at least.</p>
+            {% endif %}
+        </div>
+
+        <div x-show="openTab === 2">
+            {% if auctionList.currentBid is None %}
+            {% if auctionList.owner != user  %}
+            <p class="leading-relaxed mb-4">Make the first bid of this auctionList!</p>
+            {% else %}
+            <p class="leading-relaxed mb-4">We are waiting for bids</p>
+            {% endif %}
+
+            {% elif auctionList.buyer is not None %}
+            {% if auctionList.owner == user %}
+            <p class="leading-relaxed mb-4">You've sold this item to {{auctionList.buyer}} for
+                {{ auctionList.currentBid }}
+            </p>
+            {% elif auctionList.buyer == user %}
+            <p class="leading-relaxed mb-4">You've won this auction!</p>
+            {% else %}
+            <p class="leading-relaxed mb-4">This item is already sold</p>
+            {% endif %}
+            {% else %}
+            <p class="leading-relaxed mb-4">Current price: {{ auctionList.currentBid }}</p>
+            {% endif %}
+
+            <div class="flex border-t border-gray-200 py-2">
+                <span class="text-gray-500">Starting Bid</span>
+                <span class="ml-auto text-gray-900">${{ auctionList.startingBid }}</span>
+
+            </div>
+            <div class="flex border-t border-gray-200 py-2">
+                <span class="text-gray-500">Current Bid</span>
+
+                {% if auctionList.currentBid is None %}
+                <span class="ml-auto text-gray-900">There are no offers for this list yet.</span>
+                {% else %}
+                <span class="ml-auto text-gray-900">${{ auctionList.currentBid }}</span>
+                {% endif %}
+            </div>
+            <div class="flex border-t border-b mb-6 border-gray-200 py-2">
+                <span class="text-gray-500">Date</span>
+                <span class="ml-auto text-gray-900">{{ auctionList.createdAt|date:"N d, Y G:i a" }}</span>
+            </div>
+
+            <div class="flex justify-end">
+
+                {% if auctionList.isActive and auctionList.owner != user %}
+
+                <form action="{% url 'makeBid' auctionList.id %}" method="post" class="flex justify-start w-full">
+                    {% csrf_token %}
+                    {{ bidForm.offer }}
+                    <input type="submit" value="Bid on it!"
+                        class="cursor-pointer px-3 py-2 text-sm font-medium leading-5 text-center text-white rounded-md bg-yellow-500 hover:bg-yellow-600 ">
+
+                </form>
+
+                {% endif %}
+
+                <a href="{% url 'changeWatchList' auctionList.id 'auctionList'%}"
+                    class="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500">
+
+                    {% if auctionList.isWatched %}
+                    <span title="Delete from my Watch List"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                        </svg></span>
+
+                    {% else %}
+                    <span title="Add to my Watch List"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 "
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </span>
+
+                    {% endif %}
+                </a>
+
+            </div>
+
+            {% if failureBid %}
+            <div class="flex border-t border-gray-200 mt-6 py-2">
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#ff5722"
+                    class="w-6 h-6 mx-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636">
+                    </path>
+                </svg>
+                {% if auctionList.currentBid %}
+                <label>Your bid must be bigger than
+                    {{ auctionList.currentBid|default:auctionList.startingBid }}</label>
+                {% else %}
+                <label>Your bid must be equal or bigger than
+                    {{ auctionList.currentBid|default:auctionList.startingBid }}</label>
+                {% endif %}
+
+            </div>
+            {% endif %}
+        </div>
+        <div x-show="openTab === 3" class="overflow-y-auto scroll-hidden h-60 px-4">
+
+            {% if auctionList.isActive %}
+            <div class="w-full mt-4">
+                <form action="{% url 'addComment' auctionList.id %}" method="post">
+                    {% csrf_token %}
+                    {{commentForm.title}}
+                    {{commentForm.content}}
+
+                    <div class="p-2 w-full">
+                        <input type=submit
+                            class="flex mx-auto text-white bg-yellow-500 border-0 py-2 px-8 focus:outline-none hover:bg-yellow-600 rounded text-lg"
+                            value="Comment">
+                    </div>
+
+                </form>
+            </div>
+            {% endif %}
+
+            {% for comment in comments %}
+            <div
+                class="container flex flex-col w-full max-w-lg p-6 mx-auto divide-y rounded-md divide-coolGray-300 bg-coolGray-50 text-coolGray-800">
+                <div class="flex justify-between p-4">
+                    <div class="flex space-x-4">
+                        <div>
+                            <h4 class="font-bold">{{ comment.user|default:"Unknown auctor"|capfirst }}</h4>
+                            <span class="text-xs text-coolGray-600">{{ comment.createdAt|date:"M, d" }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 space-y-2 text-sm text-coolGray-600">
+                    <h4 class="font-bold">{{ comment.title }}</h4>
+                    <h5>{{ comment.content }}</h5>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+    </div>
+    {% comment %} FIN TAB {% endcomment %}
+
+    {% comment %} CAROUSEL {% endcomment %}
+    <div class="swiper mySwiper lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded">
+        <div class="swiper-wrapper ">
+            {% for picture in aucListPictures %}
+            <div class="swiper-slide">
+                <img src="{{picture.picture.url}}" alt="{{picture.optText}}">
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+
+    <!-- Swiper JS -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        var swiper = new Swiper('.mySwiper', {
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+    </script>
+    {% comment %} FIN CAROUSEL {% endcomment %}
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'auctions/layout.html'%}
+
+{% block title %}
+E-Commerce | Add Listing
+{% endblock %}
+
+{% block body %}
+
+<div class="container items-center px-5 py-12 lg:px-20">
+	<div
+		class=" flex flex-col w-full max-w-md py-5 px-10 mx-auto my-6 transition duration-500 ease-in-out transform bg-white rounded-lg md:mt-0">
+
+		<div class="mt-5">
+			{% if success %}<span>The listing has been saved</span>{% endif %}
+
+			<form action="{% url 'addAuctionList' %}" method="post" enctype="multipart/form-data" class="space-y-6">
+				{% csrf_token %}
+				<label for="title" class="block text-sm font-medium text-neutral-600"> Title </label>
+				{{form.title}}
+				<label for="description" class="block text-sm font-medium text-neutral-600"> Description </label>
+				{{form.description}}
+				<label for="startingBid" class="block text-sm font-medium text-neutral-600"> Starting Bid </label>
+				{{form.startingBid}}
+				<label for="category" class="block text-sm font-medium text-neutral-600"> Category </label>
+				{{form.category}}
+
+				{{imageFormSet.management_form}}
+				{% for form in imageFormSet %}
+				<section class="flex flex-col w-full h-full p-1">
+					<div
+						class=" flex flex-col items-center justify-center py-4 text-base transition duration-500 ease-in-out transform bg-white border border-dashed rounded-lg focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2">
+
+						{{ form.picture }}
+
+						{{form.optText}}
+
+					</div>
+				</section>
+
+				{% endfor %}
+
+				<div class="flex justify-center">
+					<input type="submit"
+						class="cursor-pointer block w-1/2 px-3 py-2 mx-1 text-sm font-medium leading-5 text-center text-white rounded-md bg-yellow-500 hover:bg-yellow-600 md:mx-0 md:w-auto"
+						value="Upload" />
+				</div>
+
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

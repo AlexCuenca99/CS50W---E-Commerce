@@ -1,0 +1,55 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md">
+    <div class="px-6 py-4">
+        <h2 class="text-3xl font-bold text-center text-gray-700">E-Commerce</h2>
+
+        <h3 class="mt-1 text-xl font-medium text-center text-gray-600">Welcome</h3>
+
+        <p class="mt-1 text-center text-gray-500 dark:text-gray-400">Create account</p>
+
+        <form action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+            <div class="w-full mt-4">
+                <input
+                    class="block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-yellow-300"
+                    autofocus type="text" name="username" placeholder="Username">
+            </div>
+            <div class="w-full mt-4">
+                <input
+                    class="block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-yellow-300"
+                    type="email" name="email" placeholder="Email Address">
+            </div>
+            <div class="w-full mt-4">
+                <input
+                    class="block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-yellow-300"
+                    type="password" name="password" placeholder="Password">
+            </div>
+            <div class="w-full mt-4">
+                <input
+                    class="block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-yellow-300"
+                    type="password" name="confirmation" placeholder="Confirm Password">
+            </div>
+
+            <div class="flex flex-col mt-4 items-center">
+                <div>
+                    <input
+                        class="cursor-pointer block w-1/2 px-3 py-2 mx-1 text-sm font-medium leading-5 text-center text-white rounded-md bg-yellow-500 hover:bg-yellow-600 md:mx-0 md:w-auto"
+                        type="submit" value="Register">
+                </div>
+                <div>
+                    <div>
+                        {% if message %}
+                        <p class="pt-3">{{ message }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+        </form>
+    </div>
+    <div class="flex items-center justify-center py-4 text-center bg-gray-50">
+        <span class="text-sm text-gray-600">Already have an account? </span>
+        <a href="{% url 'login' %}" class="mx-2 text-sm font-bold text-yellow-500 hover:underline">Log In in here</a>
+    </div>
+</div>
+{% endblock %}
