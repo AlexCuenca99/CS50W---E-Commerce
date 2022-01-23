@@ -6,6 +6,8 @@ This project corresponds to [CS50’s Web Programming with Python and JavaScript
 
 **Welcome Visits!** ✅
 
+To see this project in action, you can go to [CS50 Web 2021 | Project 0 | Search.](https://youtu.be/KcKHlG9c5T0)
+
 Or, stay on this page and see Commerce Project contents based on the [structure guidelines](https://cs50.harvard.edu/web/2020/projects/2/commerce/):
 
 &nbsp;
@@ -92,4 +94,4 @@ You can click on your Watchlist in order to see only the listings you had mark. 
 
 &nbsp;
 
-**\*By:** Alex Cuenca\*
+**By:** _Alex Cuenca_
